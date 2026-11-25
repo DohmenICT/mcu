@@ -1,6 +1,6 @@
 {
   "name": "u11-youtube-development",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.4",
   "scripts": { "test": "node test/run.js && node test/player.js", "build": "node build.js && node test/package.js", "preview": "node preview.js" }
 }

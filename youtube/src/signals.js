@@ -1,10 +1,10 @@
 'use strict';
-const { speed, gear, selection } = require('./policy');
+const { speed, gear, selection } = require('./policy.js');
 // Typed proxies use the unit's own SDK and generated SOME/IP catalogue.
 class Signals {
     constructor(builders, log, chargingSignal) { this.builders = builders; this.log = log; this.chargingSignal = chargingSignal; this.values = {}; this.timers = []; this.proxies = []; this.closed = false; }
     put(name, value) { this.values[name] = { value, at: Date.now() }; }
-    async watch(iface, field, name, decode) {
+    async watch(iface, field, name, decode, canRead) {
         try {
             // Do not enter native SOME/IP from an SDK initialization promise chain.
             await new Promise(resolve => setImmediate(resolve));
@@ -19,13 +19,13 @@ class Signals {
                 pending = true;
                 Promise.resolve().then(() => f.getValue()).then(receive, () => this.put(name, null)).then(() => { pending = false; });
             };
-            poll(); this.timers.push(setInterval(poll, 1000));
+            if (canRead !== false) { poll(); this.timers.push(setInterval(poll, 1000)); }
         } catch (e) { this.put(name, null); this.log.warn('YouTube signal ' + name + ': ' + e.message); }
     }
     start() {
         this.watch('de.bmw.infotainment.vehicle.Vehicle2', 'statusCarSpeed2', 'speed', speed);
-        this.watch('de.bmw.infrastructure.VehicleInformation', 'statusGearboxDrive', 'gearbox', gear);
-        this.watch('de.bmw.infrastructure.VehicleInformation', 'DataPowerTrain2', 'selection', selection);
+        this.watch('de.bmw.infrastructure.VehicleInformation', 'statusGearboxDrive', 'gearbox', gear, false);
+        this.watch('de.bmw.infrastructure.VehicleInformation', 'DataPowerTrain2', 'selection', selection, false);
         const c = this.chargingSignal;
         // Only an explicitly configured and car-verified charging enum is accepted.
         if (c && c.verified === true && Array.isArray(c.activeValues) && c.activeValues.length && Array.isArray(c.inactiveValues)) {

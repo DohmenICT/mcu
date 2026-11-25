@@ -1,6 +1,6 @@
 'use strict';
 const fs = require('fs'), net = require('net');
-const { Player } = require('./player'), { Controller } = require('./controller');
+const { Player } = require('./player.js'), { Controller } = require('./controller.js');
 const ROOT = '/var/opt/u11-youtube', SOCKET = '/run/u11-youtube/ctl.sock';
 let config = {}, mode = 'parked';
 try { config = JSON.parse(fs.readFileSync(ROOT + '/config.json', 'utf8')); } catch (e) {}

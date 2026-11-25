@@ -3,7 +3,7 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const { tgz, MTIME } = require('./vendor/oap_pack');
 const linker = require('./vendor/oap_link');
 const ROOT = __dirname, OUT = path.join(ROOT, 'dist'), SRC = path.join(OUT, 'source'), TREE = path.join(SRC, 'package');
-const ID = 'u11_youtube', VERSION = '0.1.0';
+const ID = 'u11_youtube', VERSION = '0.1.4';
 function write(file, data) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, data); }
 function json(file, data) { write(file, JSON.stringify(data, null, 2) + '\n'); }
 function source(name) { return fs.readFileSync(path.join(ROOT, name)); }
@@ -30,7 +30,7 @@ json(path.join(TREE, 'config/base.json'), {});
 const manifest = JSON.parse(source('vendor/base-manifest.json'));
 delete manifest.proxies['de.bmw.infotainment.controlelements.FrontCCU']; delete manifest.proxies['de.bmw.infotainment.KombiIF'];
 manifest.proxies['de.bmw.infotainment.vehicle.Vehicle2'] = { instances: '1', attributes: { statusCarSpeed2: 'rs' } };
-manifest.proxies['de.bmw.infrastructure.VehicleInformation'] = { instances: '1', attributes: { statusGearboxDrive: 'rs', DataPowerTrain2: 'rs' } };
+manifest.proxies['de.bmw.infrastructure.VehicleInformation'] = { instances: '1', attributes: { statusGearboxDrive: 's', DataPowerTrain2: 's' } };
 if (charging) {
     const p = manifest.proxies[charging.interface] || { instances: '1', attributes: {} };
     if (typeof p !== 'object') throw new Error('Charging interface conflicts with base manifest');

@@ -1,8 +1,8 @@
-# YouTube for BMW OS8 — experimental version 0.1.0
+# YouTube for BMW OS8 — experimental version 0.1.4
 
 A custom OAP app and background service, packaged for the same MGU Store/mgu-deploy workflow as the [Waze HUD project](../waze/README.md). Target car: the 2023 iX1 U11 with OS8.
 
-**Built locally; not yet tested on the car. The package is not ready for video playback.** It includes the UI, YouTube search and stream resolution, an FFmpeg playback adapter, an MGU video buffer, vehicle status readers, and playback stop conditions. Playback still requires an FFmpeg/yt-dlp installation that works on the head unit, a verified BMW audio route, and validation of the vehicle signals. The charging status has deliberately not been guessed. This does not install the official YouTube app or a browser on the MGU.
+**Version 0.1.4 opens successfully on the target car. End-to-end playback is not yet verified.** It includes the UI, YouTube search and stream resolution, an FFmpeg playback adapter, an MGU video buffer, vehicle status readers, and playback stop conditions. Playback still requires an FFmpeg/yt-dlp installation that works on the head unit, a verified BMW audio route, and validation of the vehicle signals. The charging status has deliberately not been guessed. This does not install the official YouTube app or a browser on the MGU.
 
 ## Controls and behavior
 
@@ -30,8 +30,8 @@ Preview: `http://127.0.0.1:8788`. This is only a UI simulation with mock search 
 
 The build produces:
 
-- `dist/u11_youtube@0.1.0.tgz`: OAP source package, to be linked against the head unit's own SDK.
-- `dist/u11-youtube@0.1.0.tgz`: background service.
+- `dist/u11_youtube@0.1.4.tgz`: OAP source package, to be linked against the head unit's own SDK.
+- `dist/u11-youtube@0.1.4.tgz`: background service.
 - `dist/catalog.json`: local catalog with checksums and dependencies.
 
 The build is self-contained. The required open-source build and drawing components and their licenses are in `vendor`. These packages do not contain BMW SDK code or keys.
@@ -72,3 +72,12 @@ The packages target the existing Store/deployer, but **do not install this as an
 The helper exposes only a local Unix socket, not a network control port. The socket is accessible to the existing OAP app group; it is not a security boundary against other trusted root/OAP apps already on the same head unit.
 
 See `THIRD_PARTY.md` for provenance and licenses.
+
+## On-car validation (2026-11-25)
+
+- Fixed notification-only gear field permissions and explicit local module extensions.
+- Fixed a startup crash caused by the BMW SDK heartbeat property shadowing the playback heartbeat method. A regression test covers this collision.
+- The owner confirmed that the YouTube screen remains open after installing 0.1.4.
+- Separately installed FFmpeg 7.0.2 and yt-dlp 2026.11.23; both start successfully. FFmpeg passed silent synthetic video and audio processing tests.
+- These binaries are not bundled in the app release. The verified Python installation runs yt-dlp.
+- Speaker output, YouTube streaming, foreground stop behavior and vehicle signal behavior still need on-car validation. audioVerified remains false; chargingSignal remains unset.

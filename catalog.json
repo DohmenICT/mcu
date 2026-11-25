@@ -46,11 +46,11 @@
     {
       "id": "u11_youtube",
       "kind": "app",
-      "version": "0.1.0",
+      "version": "0.1.4",
       "title": "YouTube (test - setup vereist)",
       "description": "Lokaal prototype: nog niet afspeelklaar. FFmpeg, yt-dlp, BMW-audio en voertuigsignalen moeten op de auto worden ingericht en getest.",
       "requires": {
-        "u11-youtube": "0.1.0",
+        "u11-youtube": "0.1.4",
         "mgu-render": "0.6.23"
       },
       "mguHmi": [
@@ -58,17 +58,17 @@
       ],
       "uninstallable": true,
       "artifact": {
-        "name": "u11_youtube@0.1.0.tgz",
-        "url": "https://github.com/DohmenICT/mcu/releases/download/catalog/u11_youtube@0.1.0.tgz",
-        "size": 296141,
-        "sha256": "f502f8d2f594f3bc1f8dea71479d569c31e2050febdb76ef2ee4b3b30b37a51d"
+        "name": "u11_youtube@0.1.4.tgz",
+        "url": "https://github.com/DohmenICT/mcu/releases/download/catalog/u11_youtube@0.1.4.tgz",
+        "size": 296417,
+        "sha256": "58ad1505b5fad29855bc591cdc2c56aa0550a3e7251d78744bf3cd4f3f2c6202"
       },
       "build": "unit"
     },
     {
       "id": "u11-youtube",
       "kind": "tool",
-      "version": "0.1.0",
+      "version": "0.1.4",
       "title": "YouTube OS8 player (test)",
       "description": "Experimentele afspeelservice. Binaries en bevestigde audio-configuratie worden niet meegeleverd.",
       "requires": {
@@ -79,10 +79,10 @@
       ],
       "uninstallable": true,
       "artifact": {
-        "name": "u11-youtube@0.1.0.tgz",
-        "url": "https://github.com/DohmenICT/mcu/releases/download/catalog/u11-youtube@0.1.0.tgz",
-        "size": 18815,
-        "sha256": "043291635d681865b09c4ec6ead0f72e012f669fba2f32214e97d9fe9c03cee2"
+        "name": "u11-youtube@0.1.4.tgz",
+        "url": "https://github.com/DohmenICT/mcu/releases/download/catalog/u11-youtube@0.1.4.tgz",
+        "size": 18823,
+        "sha256": "0ec1e342a580c85c8d78fa2e7a4d0b4d966ba2fe1587c1eda4b1e09c12bc0c17"
       }
     }
   ]

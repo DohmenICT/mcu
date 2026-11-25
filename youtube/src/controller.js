@@ -1,6 +1,6 @@
 'use strict';
 const EventEmitter = require('events');
-const { decision } = require('./policy');
+const { decision } = require('./policy.js');
 class Controller extends EventEmitter {
     constructor(player, mode, clock, save) {
         super(); this.player = player; this.mode = mode === 'charging' ? mode : 'parked';

@@ -5,6 +5,30 @@ const { Controller } = require('../src/controller'), { Signals } = require('../s
 const view = require('../src/view');
 let count = 0;
 function test(name, fn) { fn(); count++; console.log('PASS ' + name); }
+test('BMW SDK heartbeat property cannot shadow playback heartbeat', () => {
+    const vm = require('vm');
+    const source = fs.readFileSync(path.join(__dirname, '../src/app.js'), 'utf8');
+    let instance;
+    class OnlineApp extends EventEmitter {
+        constructor() { super(); this.heartbeat = {}; instance = this; }
+        start() { return Promise.resolve(); }
+    }
+    vm.runInNewContext(source, {
+        require(name) {
+            if (name.indexOf('OnlineApp') >= 0) return OnlineApp;
+            if (name.indexOf('/logging/') >= 0) return { getSDKLogger: () => ({}) };
+            if (name === 'fs') return fs;
+            return {};
+        },
+        process: { on() {} }, clearInterval, Promise
+    });
+    let sent;
+    instance.send = value => { sent = value; };
+    instance.sendPlaybackHeartbeat();
+    assert.strictEqual(sent.op, 'heartbeat');
+    assert.strictEqual(sent.front, false);
+    assert.strictEqual(typeof instance.heartbeat, 'object');
+});
 let now = 10000;
 const fresh = value => ({ value, at: now });
 const car = () => ({ speed: fresh(0), gear: fresh('P'), charging: fresh(true) });

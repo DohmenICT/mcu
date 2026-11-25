@@ -1,7 +1,7 @@
 'use strict';
 const cp = require('child_process'), fs = require('fs'), EventEmitter = require('events');
-const { Frames } = require('./frames');
-const { videoId, streamUrl, searchQuery } = require('./youtube');
+const { Frames } = require('./frames.js');
+const { videoId, streamUrl, searchQuery } = require('./youtube.js');
 class Player extends EventEmitter {
     constructor(config, spawn, FrameWriter) { super(); this.config = config; this.spawn = spawn || cp.spawn; this.FrameWriter = FrameWriter || Frames; this.children = new Set(); this.generation = 0; this.frames = null; this.query = null; }
     ready() {

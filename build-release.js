@@ -6,8 +6,8 @@ for (const app of ['waze', 'youtube']) cp.execFileSync(process.execPath, [path.j
 const specs = [
     { folder: 'waze', id: 'u11_waze_hud', kind: 'app', version: '0.1.2', title: 'Waze HUD (test)', description: 'Waze CarPlay-kaart op het HUD; getest op iX1 U11 OS8, vaste schermindeling.', requires: { 'u11-waze-hud': '0.1.0' } },
     { folder: 'waze', id: 'u11-waze-hud', kind: 'tool', version: '0.1.0', title: 'Waze HUD U11 helper', description: 'Schermuitsnede en HUD-uitvoer voor Waze HUD.', requires: { 'cluster-render': '0.6.9', 'mgu-deploy': '0.8.22' } },
-    { folder: 'youtube', id: 'u11_youtube', kind: 'app', version: '0.1.0', title: 'YouTube (test - setup vereist)', description: 'Lokaal prototype: nog niet afspeelklaar. FFmpeg, yt-dlp, BMW-audio en voertuigsignalen moeten op de auto worden ingericht en getest.', requires: { 'u11-youtube': '0.1.0', 'mgu-render': '0.6.23' } },
-    { folder: 'youtube', id: 'u11-youtube', kind: 'tool', version: '0.1.0', title: 'YouTube OS8 player (test)', description: 'Experimentele afspeelservice. Binaries en bevestigde audio-configuratie worden niet meegeleverd.', requires: { 'mgu-deploy': '0.8.22' } }
+    { folder: 'youtube', id: 'u11_youtube', kind: 'app', version: '0.1.4', title: 'YouTube (test - setup vereist)', description: 'Lokaal prototype: nog niet afspeelklaar. FFmpeg, yt-dlp, BMW-audio en voertuigsignalen moeten op de auto worden ingericht en getest.', requires: { 'u11-youtube': '0.1.4', 'mgu-render': '0.6.23' } },
+    { folder: 'youtube', id: 'u11-youtube', kind: 'tool', version: '0.1.4', title: 'YouTube OS8 player (test)', description: 'Experimentele afspeelservice. Binaries en bevestigde audio-configuratie worden niet meegeleverd.', requires: { 'mgu-deploy': '0.8.22' } }
 ];
 const components = specs.map(spec => {
     const name = spec.id + '@' + spec.version + '.tgz';
