@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="nl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YouTube OS8 — lokale simulatie</title>
+<style>body{margin:0;background:#080c12;color:#e4eaf4;font:16px system-ui}main{max-width:1280px;margin:35px auto;padding:0 20px}h1{font-size:24px}p{color:#a9b5c7}canvas{width:100%;border:1px solid #344154;border-radius:16px;touch-action:none}button{background:#263142;color:white;border:1px solid #53637a;border-radius:6px;padding:12px;margin:0 8px 8px 0;cursor:pointer}small{display:block;color:#9aa9be;margin-top:16px}</style>
+<main><h1>YouTube op OS8</h1><p>Lokale interfacesimulatie. Geen verbinding met de BMW, geen echte zoekresultaten of video.</p>
+<canvas width="1280" height="600" aria-label="Aanraakinterface van de YouTube-testapp"></canvas>
+<p>Simuleer de auto:</p><button onclick="scenario('park')">In P</button><button onclick="scenario('charge')">In P en laden</button><button onclick="scenario('drive')">Rijden</button><button onclick="scenario('unknown')">Geen voertuigdata</button>
+<small>Typ op het schermtoetsenbord, of gebruik je eigen toetsenbord terwijl het zoekveld openstaat. De auto-versie gebruikt dezelfde schermindeling.</small></main>
+<script>var module={exports:{}};</script><script src="/view.js"></script>
+<script>
+const view=module.exports, canvas=document.querySelector('canvas'), ctx=canvas.getContext('2d');
+let car='unknown',targets=[],model={query:'',page:'home',state:{mode:'parked',phase:'idle',results:[]}};
+const cv={clear(c){ctx.fillStyle=c;ctx.fillRect(0,0,1280,600)},fillRect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)},text(t,x,y,size,c,o){ctx.fillStyle=c;ctx.font=((o&&o.font==='bold')?'600 ':'400 ')+size+'px system-ui';ctx.fillText(t,x,y)}};
+function blocked(){return car==='unknown'?'Wachten op actuele snelheid':car==='drive'?'Video gestopt: auto beweegt':model.state.mode==='charging'&&car!=='charge'?'Wachten op actief laden':null}
+function render(){model.state.blocked=blocked();targets=view.draw(cv,model);if(model.state.phase==='playing'){cv.fillRect(320,185,640,360,'#202b3c');cv.text('VOORBEELD — GEEN VIDEO',370,375,26,'#ffffff')}}
+function scenario(s){car=s;if(blocked())model.state.phase='idle';render()}
+function send(q){model.state.message='';if(q.op==='mode'){model.state.mode=q.mode;if(blocked())model.state.phase='idle'}else if(q.op==='stop')model.state.phase='idle';else if(q.op==='search'){model.state.results=[{id:'aqz-KE-bpKQ',title:'Voorbeeldresultaat: Big Buck Bunny (simulatie)'}];model.state.phase='idle'}else if(q.op==='play'){if(blocked())model.state.message=blocked();else{model.state.phase='playing';model.state.title='Voorbeeldvideo — lokale simulatie'}}render()}
+canvas.addEventListener('pointerup',e=>{const r=canvas.getBoundingClientRect(),t=view.hit(targets,(e.clientX-r.left)*1280/r.width,(e.clientY-r.top)*600/r.height);if(t){view.action(model,t.id,send);render()}});
+document.addEventListener('keydown',e=>{if(!model.keyboard)return;if(e.key==='Backspace'){e.preventDefault();view.action(model,'erase',send)}else if(e.key==='Enter')view.action(model,'search',send);else if(e.key.length===1)model.query=(model.query+e.key).slice(0,160);render()});render();
+</script></html>

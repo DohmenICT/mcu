@@ -1,0 +1,7 @@
+**/dist/
+**/config.local.json
+node_modules/
+*.pem
+*.key
+enet_known_hosts*
+private-diagnostics/

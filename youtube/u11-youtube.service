@@ -1,0 +1,26 @@
+[Unit]
+Description=YouTube OS8 experimental player
+RequiresMountsFor=/var/opt
+After=local-fs.target
+StartLimitIntervalSec=600
+StartLimitBurst=3
+
+[Service]
+User=root
+Group=tm_oap_app
+ExecStart=/usr/bin/node /var/opt/u11-youtube/current/service.js
+RuntimeDirectory=u11-youtube
+RuntimeDirectoryMode=0750
+Restart=on-failure
+RestartSec=10
+KillMode=control-group
+TimeoutStopSec=5
+NoNewPrivileges=true
+LimitCORE=0
+MemoryMax=384M
+CPUQuota=150%
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,7 @@
+{
+  "ytDlp": "/var/opt/u11-youtube/bin/yt-dlp",
+  "ffmpeg": "/var/opt/u11-youtube/bin/ffmpeg",
+  "audioDevice": null,
+  "audioVerified": false,
+  "chargingSignal": null
+}

@@ -1,0 +1,25 @@
+[Unit]
+Description=Waze HUD U11 experimental card display
+RequiresMountsFor=/var/opt
+After=local-fs.target
+StartLimitIntervalSec=600
+StartLimitBurst=3
+
+[Service]
+User=root
+Group=tm_oap_app
+ExecStart=/usr/bin/node /var/opt/u11-waze-hud/current/hud-service.js
+RuntimeDirectory=u11-waze-hud
+RuntimeDirectoryMode=0750
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=5
+LimitCORE=0
+NoNewPrivileges=true
+MemoryMax=128M
+CPUQuota=35%
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
