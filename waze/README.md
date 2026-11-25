@@ -1,27 +1,29 @@
 # Waze HUD (test) — U11 OS8
 
-App `u11_waze_hud` 0.1.2 en helper `u11-waze-hud` 0.1.0, via mgu-deploy. Getest op een BMW iX1 U11 uit 2023 met OS8, ID8-BCP, x86-64 en een centrale schermbuffer van 1920×960.
+App `u11_waze_hud` 0.1.2 and helper `u11-waze-hud` 0.1.0, installed through mgu-deploy. Tested on a 2023 BMW iX1 U11 with OS8, ID8-BCP, x86-64, and a central display buffer of 1920×960.
 
-De helper leest één schermbeeld per seconde via de bestaande `winston-grabber`, herkent twee bekende posities van de zichtbare Waze-manoeuvrekaart in CarPlay en toont een verkleinde uitsnede via `cluster-render` op het HUD. Geen OCR of injectie in BMW's navigatie. De voorkeur Aan/Uit wordt bewaard; standaard staat automatisch tonen aan. Wisselen naar een onbekende kaartindeling of een mislukt schermbeeld verbergt de uitsnede. Vastgelopen Waze-inhoud in verder nieuwe screenshots wordt niet herkend als verouderde navigatie.
+The helper captures one screen image per second using the existing `winston-grabber`, recognizes two known positions of the visible Waze maneuver card in CarPlay, and displays a reduced crop on the HUD through `cluster-render`. It does not use OCR or inject instructions into BMW navigation. The on/off preference is saved; automatic display is enabled by default. An unrecognized card layout or failed capture hides the crop. Frozen Waze content within otherwise fresh screenshots is not detected as stale navigation.
 
-## Bevestigd op de testauto
+## Verified on the test car
 
-- De tegel en Aan/Uit-bediening werken.
-- Automatisch starten na herstart en het bewaren van de instelling werken.
-- Waze-manoeuvrekaart zichtbaar en leesbaar naast snelheid en snelheidslimiet.
-- Twee kaartposities (normaal en na aanraken) worden op dezelfde HUD-positie geplaatst.
-- Overschakelen naar Spotify terwijl Waze navigeert verbergt de Waze-uitsnede.
+- The app tile and on/off controls work.
+- Automatic startup after a restart and saving the preference work.
+- The Waze maneuver card is visible and readable alongside speed and speed-limit information.
+- Two card positions (normal and after touching the screen) map to the same HUD position.
+- Switching to Spotify while Waze continues navigating hides the Waze crop.
 
-## Beperkingen
+## Limitations
 
-Dit is herkenning van een vaste pixelindeling, geen betrouwbare identificatie van de actieve app. Waze moet vooraan staan. Andere modellen, resoluties, donkere modus, langere straatnamen, rotondes, rijstrookadvies, BMW-pop-ups en gebruik tijdens rijden zijn niet gevalideerd. Privéreferentiebeelden waarmee de herkenning is ontwikkeld worden niet gepubliceerd.
+This recognizes a fixed pixel layout; it does not reliably identify the active app. Waze must remain in the foreground. Other models, resolutions, dark mode, longer street names, roundabouts, lane guidance, BMW pop-ups, and use while driving have not been validated. The private reference images used to develop the recognition are not published.
 
-De helper heeft `cluster-render >= 0.6.9`, `mgu-deploy >= 0.8.22` en de firmwarefunctie `winston-grabber` nodig. De renderer moet de ID8-HUD-uitvoer ondersteunen. Op OS8 wordt een appinstallatie na headunit-herstart actief.
+The helper requires `cluster-render >= 0.6.9`, `mgu-deploy >= 0.8.22`, and the firmware's `winston-grabber` utility. The renderer must support ID8 HUD output. On OS8, an app installation takes effect after the head unit restarts.
 
-## Bouwen en verwijderen
+## Build and uninstall
+
+From the repository root:
 
 ```powershell
 node waze/build.js
 ```
 
-Uitvoer in `waze/dist`: het app-bronpakket en de helper. De headunit linkt zijn eigen SDK; er wordt geen SDK-code meegeleverd. Verwijder eerst de app en daarna de helper via de Store. Deze app en de YouTube-app gebruiken afzonderlijke IDs, mappen en services.
+Output in `waze/dist`: the app source package and its helper. The head unit links its own SDK; no SDK code is included. To uninstall, remove the app first, then its helper through the Store. This app and the YouTube app use separate IDs, directories, and services.

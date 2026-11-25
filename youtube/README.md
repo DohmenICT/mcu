@@ -1,72 +1,74 @@
-# YouTube voor BMW OS8 — experimentele versie 0.1.0
+# YouTube for BMW OS8 — experimental version 0.1.0
 
-Eigen OAP-app en achtergrondservice, verpakt voor dezelfde MGU Store/mgu-deploy-route als het [Waze HUD-project](../waze/README.md). Doelauto: de 2023 iX1 U11 met OS8.
+A custom OAP app and background service, packaged for the same MGU Store/mgu-deploy workflow as the [Waze HUD project](../waze/README.md). Target car: the 2023 iX1 U11 with OS8.
 
-**Lokaal gebouwd; nog niet op de auto getest. Het pakket is nog niet gebruiksklaar voor video.** Het bevat de interface, YouTube-zoekfunctie/streamresolver, FFmpeg-afspeeladapter, MGU-videobuffer, voertuigstatuslezers en stopvoorwaarden. Voor afspelen ontbreken nog een op de headunit werkende FFmpeg/yt-dlp-installatie, een bevestigde BMW-audioroute en validatie van de voertuigsignalen. De laadstatus is bewust niet geraden. De officiële YouTube-app of een browser wordt niet op de MGU geïnstalleerd.
+**Built locally; not yet tested on the car. The package is not ready for video playback.** It includes the UI, YouTube search and stream resolution, an FFmpeg playback adapter, an MGU video buffer, vehicle status readers, and playback stop conditions. Playback still requires an FFmpeg/yt-dlp installation that works on the head unit, a verified BMW audio route, and validation of the vehicle signals. The charging status has deliberately not been guessed. This does not install the official YouTube app or a browser on the MGU.
 
-## Bediening
+## Controls and behavior
 
-- Eigen tegel **YouTube (test)** en aanraaktoetsenbord.
-- Zoeken op YouTube (maximaal zes resultaten) of een video-ID openen.
-- Afspelen en stoppen. Na stoppen kies je opnieuw de video; pauze/hervatten op dezelfde positie is nog niet geïmplementeerd.
-- **Tijdens parkeren:** actuele snelheid exact nul en selector P.
-- **Alleen tijdens laden:** dezelfde voorwaarden, plus bevestigde actieve laadstatus.
-- De keuze blijft bewaard. Geen automatisch afspelen bij starten of na een onderbreking.
-- Ontbrekende/ongeldige voertuigdata, data ouder dan drie seconden, een verdwenen UI-verbinding of verlies van schermvoorgrond stoppen de speler. Een controle loopt elke 200 ms; de UI meldt zich elke 500 ms. Dit is geen gecertificeerde voertuigbeveiliging; de timing moet op de auto worden getest.
+- A dedicated **YouTube (test)** tile and touch keyboard.
+- Search YouTube (up to six results) or open a video ID.
+- Play and stop. After stopping, select the video again; pause/resume at the same position is not implemented yet.
+- **While parked:** current speed must be exactly zero and the selector must be in P.
+- **Only while charging:** the same conditions, plus a confirmed active charging status.
+- The mode is saved. Playback does not start automatically at startup or after an interruption.
+- Missing or invalid vehicle data, data older than three seconds, a disconnected UI, or loss of screen foreground stops the player. A check runs every 200 ms; the UI sends a heartbeat every 500 ms. This is not a certified vehicle safety mechanism; its timing must be tested on the car.
 
-## Lokaal
+## Local development
 
-Node.js is voldoende; geen npm-installatie nodig. Vanuit deze map:
+Node.js is sufficient; no npm installation is needed. From this directory:
 
 ```powershell
 node test/run.js
+node test/player.js
 node build.js
+node test/package.js
 node preview.js
 ```
 
-Preview: `http://127.0.0.1:8788`. Dit is uitsluitend een interfacesimulatie met fictieve zoekresultaten. De simulator kan de auto niet besturen. Stop met Ctrl+C. `dist/preview-home.png` toont dezelfde schermindeling.
+Preview: `http://127.0.0.1:8788`. This is only a UI simulation with mock search results. The simulator cannot control the car. Stop it with Ctrl+C.
 
-De build maakt:
+The build produces:
 
-- `dist/u11_youtube@0.1.0.tgz`: OAP-bronpakket, door de headunit tegen zijn eigen SDK te linken.
-- `dist/u11-youtube@0.1.0.tgz`: achtergrondservice.
-- `dist/catalog.json`: lokaal catalogusbestand met hashes en afhankelijkheden.
+- `dist/u11_youtube@0.1.0.tgz`: OAP source package, to be linked against the head unit's own SDK.
+- `dist/u11-youtube@0.1.0.tgz`: background service.
+- `dist/catalog.json`: local catalog with checksums and dependencies.
 
-De build werkt onafhankelijk van de genegeerde `../upstream`-map. Onder `vendor` staan de benodigde open-source bouw- en tekenonderdelen met licenties. BMW SDK-code en sleutels zitten niet in deze pakketten.
+The build is self-contained. The required open-source build and drawing components and their licenses are in `vendor`. These packages do not contain BMW SDK code or keys.
 
-## Nog nodig op de auto
+## Still required on the car
 
-1. Bestaande root SSH en MGU Store, mgu-deploy >= 0.8.22, mgu-render >= 0.6.23 met video en werkende voorgrondcontrole. Geen nieuwe root-flash nodig.
-2. Een **Linux x86-64** FFmpeg die op de glibc van deze headunit draait, met HTTPS, video/audio-decoders, filters, rawvideo en ALSA-uitvoer. yt-dlp moet ook op die omgeving werken; recente YouTube-extractie kan aanvullende JavaScript-runtime/yt-dlp-componenten vereisen. Deze binaries worden niet meegeleverd. De aanwezigheid van Node voor OAP betekent niet dat die Node-versie geschikt is voor yt-dlp.
-3. Internet voor de **helperservice**. `mguInternet` regelt de app, maar bewijst niet dat de helper internet heeft. Tijdens de test controleren met de bestaande uplink; niet blind firewall/routing wijzigen.
-4. Een door BMW bruikbare ALSA-audioroute. Audiofocus, volume en onderbreking door BMW-meldingen moeten worden getest. De ALSA-adapter is een eerste implementatie: als BMW een afzonderlijke audiofocusservice vereist, moet die nog worden toegevoegd voordat `audioVerified` wordt aangezet.
-5. De twee selectorvelden en snelheid op deze iX1 controleren. Ze komen uit publieke MGU-appvoorbeelden en zijn hier niet live gevalideerd. Tegenstrijdige geldige selectorwaarden blokkeren de speler.
-6. De echte hoogvolt-laadstatus uit de lokale catalogus identificeren en tijdens starten/stoppen van laden controleren. Een aangesloten kabel, accupercentage of 12V-laadspanning telt niet als actief laden.
+1. Existing root SSH access and MGU Store, mgu-deploy >= 0.8.22, and mgu-render >= 0.6.23 with video support and working foreground detection. Another root flash is not required.
+2. A **Linux x86-64** FFmpeg build compatible with the head unit's glibc, with HTTPS, video/audio decoders, filters, rawvideo, and ALSA output. yt-dlp must also work in that environment; current YouTube extraction may require additional JavaScript runtime or yt-dlp components. These binaries are not included. Having Node installed for OAP does not mean that Node version is suitable for yt-dlp.
+3. Internet access for the **helper service**. `mguInternet` covers the app but does not establish that the helper has internet access. Check this with the existing uplink during testing; do not change firewall or routing settings blindly.
+4. A usable BMW ALSA audio route. Audio focus, volume, and interruptions by BMW notifications must be tested. The ALSA adapter is an initial implementation: if BMW requires a separate audio-focus service, that integration must be added before enabling `audioVerified`.
+5. Verification of both selector fields and speed on this iX1. They come from public MGU app examples and have not been validated live here. Conflicting valid selector values block the player.
+6. Identification of the actual high-voltage charging status in the local catalog, followed by verification when charging starts and stops. A connected cable, battery percentage, or 12 V charging voltage does not count as active charging.
 
-`probe.js` verzamelt hiervoor een begrensde, alleen-lezen inventaris van software, ALSA-apparaten en relevante catalogusvelden. Het schrijft niets op de auto en start geen video/audio. Later kan het via de bestaande SSH-verbinding op stdin worden uitgevoerd.
+`probe.js` collects a bounded, read-only inventory of software, ALSA devices, and relevant catalog fields for these checks. It writes nothing to the car and does not start video or audio. It can later be run through the existing SSH connection using standard input.
 
-## Configuratie na de hardwaretest
+## Configuration after hardware testing
 
-Kopieer `config.example.json` lokaal naar `config.local.json`. Die lokale configuratie wordt niet in Git opgenomen. Configureer absolute paden naar de twee uitvoerbare bestanden en de geteste `audioDevice`; pas na de audiotest `audioVerified: true` instellen. De helper leest `/var/opt/u11-youtube/config.json`; die blijft buiten zijn `current`-versiemap en wordt door deze build nooit overschreven.
+Copy `config.example.json` to `config.local.json` locally. This local configuration is excluded from Git. Configure absolute paths to both executables and the tested `audioDevice`; set `audioVerified: true` only after the audio test. The helper reads `/var/opt/u11-youtube/config.json`, outside its `current` version directory. This build never overwrites that file.
 
-`chargingSignal` blijft `null` tot de echte SOME/IP-definitie is vastgesteld. Daarna heeft het deze velden (geen verzonnen voorbeeldwaarden):
+`chargingSignal` remains `null` until the actual SOME/IP definition is established. It then has these fields, using verified values rather than guessed examples:
 
-- `interface`, `field`, `member`: catalogusnamen en het pad naar de waarde binnen de veldstructuur.
-- `activeValues`, `inactiveValues`: exacte enumwaarden van de auto; alles daarbuiten is onbekend.
-- `verified: true`: alleen na de fysieke test.
+- `interface`, `field`, `member`: catalog names and the path to the value within the field structure.
+- `activeValues`, `inactiveValues`: the car's exact enum values; anything else is unknown.
+- `verified: true`: only after testing on the car.
 
-Bouw opnieuw nadat dit signaal is ingevuld: de bronconfiguratie en de alleen-lezen machtiging moeten in het OAP-pakket worden opgenomen. Het voorbeeld zonder laadconfiguratie laat de optie zien maar zal er nooit mee afspelen.
+Rebuild after configuring this signal: its source configuration and read-only permission must be included in the OAP package. The example without a charging configuration displays the mode but will never allow playback in it.
 
-## Afspelen en beperkingen
+## Playback and limitations
 
-De helper gebruikt yt-dlp voor zoeken en een gecombineerde video/audiostream tot 720p. De app accepteert alleen YouTube-video-IDs/links; de resolver accepteert alleen HTTPS-streams van googlevideo.com. Geen shellinterpolatie, cookies, wachtwoorden of accountimport. Er wordt geen toegang tot betaalde, private, leeftijdsgebonden of anderszins geblokkeerde video's omzeild. YouTube-wijzigingen, livevideo of ontbrekende gecombineerde streams kunnen afspelen verhinderen.
+The helper uses yt-dlp for search and a combined video/audio stream up to 720p. The app accepts only YouTube video IDs or links; the resolver accepts only HTTPS streams from googlevideo.com. There is no shell interpolation, cookie handling, password handling, or account import. It does not bypass access restrictions on paid, private, age-restricted, or otherwise blocked videos. YouTube changes, live video, or a lack of combined streams may prevent playback.
 
-FFmpeg decodeert naar 960×540 I420 bij 25 fps en stuurt audio vanuit dezelfde invoer naar ALSA. Drie vluchtige framebuffer-slots volgen het gedocumenteerde mgu-render-protocol. Er wordt geen videobibliotheek op schijf opgeslagen. Het geheugen/CPU-gebruik en lipsynchronisatie zijn nog niet op de auto gemeten. Native bediening is voorlopig touch; geen volledige iDrive-draaiknopbediening, accountlogin, abonnementen, seek of afspeellijsten.
+FFmpeg decodes to 960×540 I420 at 25 fps and sends audio from the same input to ALSA. Three volatile framebuffer slots follow the documented mgu-render protocol. No video library is saved to disk. Memory/CPU use and audio/video synchronization have not yet been measured on the car. Native controls currently support touch; full iDrive rotary-controller support, account login, subscriptions, seeking, and playlists are not implemented.
 
-## Installatie en verwijderen
+## Installation and removal
 
-De pakketten zijn gemaakt voor de bestaande Store/deployer, maar **nog niet installeren als dagelijkse speler**: eerst bovenstaande afhankelijkheden en signalen testen. Voor overdracht via USB gebruik je de bestaande mgu-store `usb-repo`-functie met de lokale catalogus, zodat de distributie-indeling en afhankelijke pakketten correct worden opgebouwd. Op OS8 worden appinstallaties na een headunit-herstart actief. Verwijderen: eerst de YouTube-app, daarna de YouTube-helper via de Store. De Waze-app heeft andere IDs, paden en services.
+The packages target the existing Store/deployer, but **do not install this as an everyday player yet**: first test the dependencies and signals listed above. For USB transfer, use mgu-store's existing `usb-repo` command with the local catalog to prepare the correct distribution layout and dependency metadata. On OS8, app installations take effect after a head-unit restart. To uninstall, remove the YouTube app first, then its helper through the Store. The Waze app uses different IDs, paths, and services.
 
-De helper heeft uitsluitend een lokale Unix-socket, geen netwerkbedieningspoort. De socket is toegankelijk voor de bestaande OAP-appgroep; dit is geen beveiligingsgrens tegen andere reeds vertrouwde root/OAP-apps op dezelfde headunit.
+The helper exposes only a local Unix socket, not a network control port. The socket is accessible to the existing OAP app group; it is not a security boundary against other trusted root/OAP apps already on the same head unit.
 
-Zie `THIRD_PARTY.md` voor herkomst en licenties.
+See `THIRD_PARTY.md` for provenance and licenses.
